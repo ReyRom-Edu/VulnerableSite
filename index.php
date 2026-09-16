@@ -42,7 +42,20 @@
             }
         }
     }
-    $comments_result = $conn->query("SELECT * FROM comments");
+    if($_SERVER['REQUEST_METHOD'] === 'GET'){
+        if ($page === 'comments') {
+            if(isset($_GET['search'])){
+                $search = $_GET['search'];
+                $query = "SELECT * FROM comments WHERE comment like '%$search%'";
+                $comments_result = $conn->query($query);
+            }
+            else{
+                $query = "SELECT * FROM comments";
+                $comments_result = $conn->query($query);
+            }
+            
+        }
+    }
 ?>
 <!DOCTYPE html>
 <html>
@@ -91,7 +104,12 @@
             Комментарий: <textarea name="comment"></textarea><br>
             <input type="submit" value="Отправить">
         </form>
-        <h3>Все комментарии:</h3>
+        <h3>Список:</h3>
+        <form method="GET">
+            <input type="hidden" name="page" value="comments">
+            <input type="text" name="search" placeholder="Поиск по тексту комментария" value="<?php echo $_GET['search'] ?? ''; ?>">
+            <button type="submit">Поиск</button>
+        </form>
         <ul>
             <?php while ($row = $comments_result->fetch_assoc()): ?>
             <li><strong><?php echo $row['username']; ?>:</strong> <?php echo $row['comment']; ?></li>
@@ -100,7 +118,7 @@
     <?php elseif ($page === 'update-email'): ?>
         <h2>Сменить email</h2>
         <form method="POST" action="?page=update-email">
-            <input type="text" id="username" name="username" hidden required value="<?php echo isset($_SESSION['username']) ? $_SESSION['username'] : '';?>"><br>
+            <input type="hidden" id="username" name="username" value="<?php echo isset($_SESSION['username']) ? $_SESSION['username'] : '';?>"><br>
             <label for="new_email">Новый Email:</label>
             <input type="email" id="new_email" name="new_email" required><br>
             <input type="submit" value="Update Email">
