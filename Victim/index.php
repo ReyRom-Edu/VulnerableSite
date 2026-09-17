@@ -33,7 +33,7 @@
             exit;
         }
         if ($page === 'update-email') {
-            $username = $_POST['username'];
+            $username = $_SESSION['username'];
             $new_email = $_POST['new_email'];
             $query = "UPDATE users SET email = '$new_email' WHERE username ='$username'";
             $result = $conn->query($query);
@@ -73,12 +73,12 @@
 <body>
     <h1>Lab Security</h1>
     <nav>
-        <a href="?page=home">Главная</a>
-        <a href="?page=login">Вход</a>
+        <a id="nav_home" href="?page=home">Главная</a>
+        <a id="nav_login" href="?page=login">Вход</a>
         <?php if (isset($_SESSION['username'])): ?>
-            <a href="?page=comments">Комментарии</a>
-            <a href="?page=update-email">Обновить email</a>
-            <a href="?page=logout">Выйти (<?php echo $_SESSION['username'];?>)</a>
+            <a id="nav_comments" href="?page=comments">Комментарии</a>
+            <a id="nav_update_email" href="?page=update-email">Обновить email</a>
+            <a id="nav_logout" href="?page=logout">Выйти (<?php echo $_SESSION['username'];?>)</a>
         <?php endif; ?>
     </nav>
     <hr>
@@ -100,7 +100,7 @@
     <?php elseif ($page === 'comments'): ?>
         <h2>Комментарии</h2>
         <form method="POST" action="?page=comments">
-            Логин: <input type="text" name="username" value="<?php echo isset($_SESSION['username']) ? $_SESSION['username'] : ''; ?>"><br>
+            <input type="hidden" name="username" value="<?php echo isset($_SESSION['username']) ? $_SESSION['username'] : ''; ?>"><br>
             Комментарий: <textarea name="comment"></textarea><br>
             <input type="submit" value="Отправить">
         </form>
@@ -118,7 +118,6 @@
     <?php elseif ($page === 'update-email'): ?>
         <h2>Сменить email</h2>
         <form method="POST" action="?page=update-email">
-            <input type="hidden" id="username" name="username" value="<?php echo isset($_SESSION['username']) ? $_SESSION['username'] : '';?>"><br>
             <label for="new_email">Новый Email:</label>
             <input type="email" id="new_email" name="new_email" required><br>
             <input type="submit" value="Update Email">
