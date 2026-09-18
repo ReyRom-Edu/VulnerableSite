@@ -18,6 +18,7 @@
             $query = "SELECT * FROM users WHERE username = '$username' AND password = '$password'";
             $result = $conn->query($query);
             if ($result && $result->num_rows > 0) {
+                $username = $result->fetch_object()->username;
                 $_SESSION['username'] = $username;
                 $login_message = "Добро пожаловать, $username!";
             } else {
